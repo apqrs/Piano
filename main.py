@@ -1,16 +1,27 @@
-# This is a sample Python script.
+import cv2
+import mediapipe as mp
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+img = cv2.imread('test.png')
+
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+edge = cv2.Canny(img_gray, 90, 10)
+nimg = img.copy()
+ret, thresh = cv2.threshold(edge, 150, 255, cv2.THRESH_BINARY)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+print(contours)
+# cv2.drawContours(image=img, contours=contours,contourIdx=-1, color=(0,255,0), thickness=8,lineType=cv2.LINE_AA)
+import random
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+for i, contour in enumerate(contours):  # loop over one contour area
+    for j, contour_point in enumerate(contour):  # loop over the points
+        b,g,r = random.randint(1,255),random.randint(1,255),random.randint(1,255)
+        # draw a circle on the current contour coordinate
+        cv2.circle(img, (contour_point[0][0], contour_point[0][1]), 2, (b,g,r), 2, cv2.LINE_AA)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+cv2.imshow('Test', img)
+
+cv2.waitKey()
